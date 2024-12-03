@@ -3,7 +3,7 @@
 TODO: simplify surface
 
 - [ ] Visualization
-- [ ] Priority queue / heap
+- [x] Priority queue / heap
 - [ ] Contract function
 - [ ] Error metric
 - [ ] Report
