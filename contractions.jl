@@ -7,52 +7,19 @@ struct SimplicialComplex2D
     _vertex_to_edges::Dict{Int,Vector{Int}}
     _edge_to_triangles::Dict{Int,Vector{Int}}
 
-    function SimplicialComplex2D(triangles::Vector{Tuple{Float64,Float64,Float64}})
-        coords = Vector{Vector{Float64}}()
+    function SimplicialComplex2D(triangles::Array{Tuple{Int,Int,Int}}, coords::Array{Vector{Float64}})
         vertices = Set{Int}()
         edges = Set{Tuple{Int,Int}}()
-        triangles = Set{Tuple{Int,Int,Int}}()
-
-        _vertex_to_edges = Dict{Int,Vector{Int}}()
-        _edge_to_triangles = Dict{Int,Vector{Int}}()
-
         for triangle in triangles
             for vertex in triangle
                 push!(vertices, vertex)
             end
-            push!(triangles, triangle)
-        end
-
-        for vertex in vertices
-            push!(coords, [0.0, 0.0, 0.0])
-        end
-
-        for triangle in triangles
-            for i in 1:3
-                edge = (triangle[i], triangle[i % 3 + 1])
-                if edge[1] > edge[2]
-                    edge = (edge[2], edge[1])
-                end
+            for edge in [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[3], triangle[1])]
                 push!(edges, edge)
             end
         end
 
-        for edge in edges
-            push!(_vertex_to_edges[edge[1]], edge)
-            push!(_vertex_to_edges[edge[2]], edge)
-        end
-
-        for triangle in triangles
-            for i in 1:3
-                edge = (triangle[i], triangle[i % 3 + 1])
-                if edge[1] > edge[2]
-                    edge = (edge[2], edge[1])
-                end
-                push!(_edge_to_triangles[edge], triangle)
-            end
-        end
-
-        new(coords, vertices, edges, triangles, _vertex_to_edges, _edge_to_triangles)
+        new(coords, vertices, edges, Set(triangles), Dict{Int,Vector{Int}}(), Dict{Int,Vector{Int}}())
     end
 end
 
@@ -61,9 +28,17 @@ struct ContractedSimplicialComplex2D
     contracted::SimplicialComplex2D
     vertex_contracted_to_original::Dict{Int,Set{Int}}
 
-    _contracted_triangle_Q::Dict{Tuple{Int,Int,Int},Matrix{Float64}} = Dict()
-    _contracted_edge_Q::Dict{Tuple{Int,Int},Matrix{Float64}} = Dict()
-    _contracted_vertex_Q::Dict{Int,Matrix{Float64}} = Dict()
+    _contracted_triangle_Q::Dict{Tuple{Int,Int,Int},Matrix{Float64}}
+    _contracted_edge_Q::Dict{Tuple{Int,Int},Matrix{Float64}}
+    _contracted_vertex_Q::Dict{Int,Matrix{Float64}}
+
+    function ContractedSimplicialComplex2D(original, contracted, vertex_contracted_to_original)
+        _contracted_triangle_Q = Dict{Tuple{Int,Int,Int},Matrix{Float64}}()
+        _contracted_edge_Q = Dict{Tuple{Int,Int},Matrix{Float64}}()
+        _contracted_vertex_Q = Dict{Int,Matrix{Float64}}()
+
+        new(original, contracted, vertex_contracted_to_original, _contracted_triangle_Q, _contracted_edge_Q, _contracted_vertex_Q)
+    end
 end
 
 # fills in the _triangle_Q, _edge_Q, and _vertex_Q fields of K
