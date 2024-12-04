@@ -78,7 +78,7 @@ function initialContractedSimplicialComplex2D(K::SimplicialComplex2D)
     for vertex in K.vertices
         vertex_contracted_to_original[vertex] = Set([vertex])
     end
-    contracted = ContractedSimplicialComplex2D(K, K, vertex_contracted_to_original)
+    contracted = ContractedSimplicialComplex2D(K, deepcopy(K), vertex_contracted_to_original)
 
     calculateFundamentalQuadratics(contracted)
     return contracted
@@ -167,5 +167,5 @@ function errorOfEdgeInContractedComplex(K::ContractedSimplicialComplex2D, edge::
     incident_triangles = getIncidentTriangles(K.original, Vc)
     
     # Hc = Ha U Hb - H(ab)
-    Q_Hc = 
+    #Q_Hc = 
 end
