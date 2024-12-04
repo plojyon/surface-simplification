@@ -136,13 +136,12 @@ function fundamental_quadratic(planes::Vector{Plane})
     return Q
 end
 
-function distance(point::Vector{Float64}, Q::Matrix{Float64})
-    return point' * Q * point
+function Eh(point::Vector{Float64}, Q::Matrix{Float64})
+    return [point;1]' * Q * [point;1]
 end
 
-function minDistancePoint(point::Vector{Float64}, Q::Matrix{Float64})
-    sol = Q \ [point; 1.0]
-    return sol[1:3]
+function minEh(Q::Matrix{Float64})
+    return Q[1:3, 1:3] \ [0;0;0]
 end
 
 # the set of planes spanned by triangles in K incident to at least one vertex in the set Vc
@@ -159,13 +158,7 @@ function getIncidentTriangles(K::SimplicialComplex2D, Vc::Set{Int})
 end
 
 function errorOfEdgeInContractedComplex(K::ContractedSimplicialComplex2D, edge::Edge)
-    # Vc is the set of all points that were in K0 and contracted to
-    # c where c is the contracted edge
-    Vc = K.vertex_contracted_to_original[edge[1]] ∪ K.vertex_contracted_to_original[edge[2]] ∪ Set([edge[1], edge[2]])
-
-    # This is labeled as H in the paper
-    incident_triangles = getIncidentTriangles(K.original, Vc)
-    
-    # Hc = Ha U Hb - H(ab)
-    #Q_Hc = 
+    Q = K._contracted_vertex_Q[edge[1]] + K._contracted_vertex_Q[edge[2]] - K._contracted_edge_Q[edge]
+    min_point = minEh(Q)
+    return Eh(min_point, Q)
 end
