@@ -4,14 +4,14 @@ const Triangle = Tuple{Int,Int,Int}
 const Edge = Tuple{Int,Int}
 
 function triangleEdges(triangle::Triangle)
-    return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[1],triangle[3])]
+    return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[1], triangle[3])]
 end
 
 function sortEdge(edge::Edge)
     return edge[1] < edge[2] ? edge : (edge[2], edge[1])
 end
 
-function pushToSetDict!(dict::Dict{K, Set{V}}, key::K, value::V) where {K, V}
+function pushToSetDict!(dict::Dict{K,Set{V}}, key::K, value::V) where {K,V}
     if haskey(dict, key)
         push!(dict[key], value)
     else
@@ -36,13 +36,13 @@ function sortTriangle(triangle::Triangle)
 end
 
 struct SimplicialComplex2D
-    coords::Array{Vector{Float64}}
+    coords::Array{Vector{Float32}}
     vertices::Set{Int}
 
     _vertex_to_edges::Dict{Int,Set{Edge}}
     _edge_to_triangles::Dict{Edge,Set{Triangle}}
 
-    function SimplicialComplex2D(triangles::Array{Triangle}, coords::Array{Vector{Float64}})
+    function SimplicialComplex2D(triangles::Array{Triangle}, coords::Array{Vector{Float32}})
         _vertex_to_edges = Dict{Int,Set{Edge}}()
         _edge_to_triangles = Dict{Edge,Set{Triangle}}()
 
@@ -107,7 +107,7 @@ function replaceVertexInEdgesAndTriangles(K::SimplicialComplex2D, old_vertex::In
 
         for triangle in K._edge_to_triangles[edge]
             new_triangle = sortTriangle(Tuple([vertex == old_vertex ? new_vertex : vertex for vertex in triangle]))
-            
+
             # triangle is stored in 3 entries edges => triangles
             for edge_of_trig in triangleEdges(triangle)
                 # we do not need to delete the triangle from the old edge
@@ -128,14 +128,14 @@ struct ContractedSimplicialComplex2D
     original::SimplicialComplex2D
     contracted::SimplicialComplex2D
 
-    _contracted_triangle_Q::Dict{Triangle,Matrix{Float64}}
-    _contracted_edge_Q::Dict{Edge,Matrix{Float64}}
-    _contracted_vertex_Q::Dict{Int,Matrix{Float64}}
+    _contracted_triangle_Q::Dict{Triangle,Matrix{Float32}}
+    _contracted_edge_Q::Dict{Edge,Matrix{Float32}}
+    _contracted_vertex_Q::Dict{Int,Matrix{Float32}}
 
     function ContractedSimplicialComplex2D(original, contracted)
-        _contracted_triangle_Q = Dict{Triangle,Matrix{Float64}}()
-        _contracted_edge_Q = Dict{Edge,Matrix{Float64}}()
-        _contracted_vertex_Q = Dict{Int,Matrix{Float64}}()
+        _contracted_triangle_Q = Dict{Triangle,Matrix{Float32}}()
+        _contracted_edge_Q = Dict{Edge,Matrix{Float32}}()
+        _contracted_vertex_Q = Dict{Int,Matrix{Float32}}()
 
         new(original, contracted, _contracted_triangle_Q, _contracted_edge_Q, _contracted_vertex_Q)
     end
@@ -170,16 +170,16 @@ function calculateFundamentalQuadratics(K::ContractedSimplicialComplex2D)
 end
 
 struct Plane
-    normal::Vector{Float64}
-    offset::Float64
-    u::Vector{Float64}
+    normal::Vector{Float32}
+    offset::Float32
+    u::Vector{Float32}
 
-    function Plane(normal::Vector{Float64}, offset::Float64)
+    function Plane(normal::Vector{Float32}, offset::Float32)
         new(normal, offset, [normal; offset])
     end
 end
 
-function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float64}})
+function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float32}})
     #TODO [CHATGPT] confirm code
 
     a = coords[triangle[1]]
@@ -193,19 +193,19 @@ function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float64}})
 end
 
 function fundamental_quadratic(planes::Vector{Plane})
-    Q = Matrix{Float64}(undef, 4, 4)
+    Q = Matrix{Float32}(undef, 4, 4)
     for i in 1:length(planes)
         Q += planes[i].u * planes[i].u'
     end
     return Q
 end
 
-function Eh(point::Vector{Float64}, Q::Matrix{Float64})
-    return [point;1]' * Q * [point;1]
+function Eh(point::Vector{Float32}, Q::Matrix{Float32})
+    return [point; 1]' * Q * [point; 1]
 end
 
-function minEh(Q::Matrix{Float64})
-    return Q[1:3, 1:3] \ [0;0;0]
+function minEh(Q::Matrix{Float32})
+    return Q[1:3, 1:3] \ [0; 0; 0]
 end
 
 # the set of planes spanned by triangles in K incident to at least one vertex in the set Vc
@@ -226,12 +226,12 @@ function minCForEdgeContraction(K::ContractedSimplicialComplex2D, edge::Edge)
     return minEh(Q)
 end
 
-function contract(K::ContractedSimplicialComplex2D, edge::Edge)
+function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
     # 1) remove ab, abx, and aby
     # remove edge
     delete!(K.contracted._vertex_to_edges[edge[1]], edge)
     delete!(K.contracted._vertex_to_edges[edge[2]], edge)
-    
+
     # remove triangles (each triangle is stored in 3 entries edges => triangles)
     for triangle in K.contracted._edge_to_triangles[edge]
         for edge_trig in triangleEdges(triangle)
@@ -245,8 +245,7 @@ function contract(K::ContractedSimplicialComplex2D, edge::Edge)
     c_coords = minCForEdgeContraction(K, edge)
     c = length(K.contracted.coords) + 1
     push!(K.contracted.coords, c_coords)
-    
+
     replaceVertexInEdgesAndTriangles(K.contracted, edge[1], c)
     replaceVertexInEdgesAndTriangles(K.contracted, edge[2], c)
-    return K 
 end
