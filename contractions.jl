@@ -179,14 +179,13 @@ struct Plane
     end
 end
 
-function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float32}})
-    #TODO [CHATGPT] confirm code
-
+function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float64}})
     a = coords[triangle[1]]
     b = coords[triangle[2]]
     c = coords[triangle[3]]
 
     normal = cross(b - a, c - a)
+    normal = normalize(normal)
     offset = -dot(normal, a)
 
     return Plane(normal, offset)
@@ -205,7 +204,14 @@ function Eh(point::Vector{Float32}, Q::Matrix{Float32})
 end
 
 function minEh(Q::Matrix{Float32})
+    print(Q)
     return Q[1:3, 1:3] \ [0; 0; 0]
+end
+
+# napisal Yon Ploj (poglej git history)
+function error(K::ContractedSimplicialComplex2D, edge::Edge)
+    point, Q = minCForEdgeContraction(K, edge)
+    return Eh(point, Q)
 end
 
 # the set of planes spanned by triangles in K incident to at least one vertex in the set Vc
@@ -248,4 +254,52 @@ function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
 
     replaceVertexInEdgesAndTriangles(K.contracted, edge[1], c)
     replaceVertexInEdgesAndTriangles(K.contracted, edge[2], c)
+end
+
+
+function getlink(K::SimplicialComplex2D, vertex::Int)
+    linkvertices = Set{Int}()
+    linkedges = Set{Edge}()
+    # get all edges incident to the vertex
+    edges = K._vertex_to_edges[vertex]
+    # opposite_vertices = Set([edge[1] == vertex ? edge[2] : edge[1] for edge in edges])
+    triangles = Set(union([K._edge_to_triangles[edge] for edge in edges]...))
+
+    # for each triangle, remove the vertex from the triangle, add the rest to the link
+    for triangle in triangles
+        triangle = sortTriangle(triangle)
+        triset = Set(triangle)
+        delete!(triset, vertex)
+        push!(linkvertices, triset...)
+        push!(linkedges, sortEdge(Tuple(triset)))
+    end
+    linkvertices, linkedges
+end
+
+function getlink(K::SimplicialComplex2D, edge::Edge)
+    linkvertices = Set{Int}()
+    # get all triangles incident to the edge
+    triangles = K._edge_to_triangles[edge]
+    # for each triangle, remove the edge from the triangle, add the rest to the link
+    for triangle in triangles
+        triangle = sortTriangle(triangle)
+        triset = Set(triangle)
+        delete!(triset, edge[1])
+        delete!(triset, edge[2])
+        push!(linkvertices, triset...)
+    end
+    linkvertices
+end
+
+function issafe(K::SimplicialComplex2D, edge::Edge)
+    # check that edge exists
+    if !haskey(K._edge_to_triangles, edge)
+        return false
+    end
+    # check link condition lemma
+    # lk a \cap lk b \subseteq lk ab
+    link_a_vert, link_a_edge = getlink(K, edge[1])
+    link_b_vert, link_b_edge = getlink(K, edge[2])
+    link_ab = getlink(K, edge)
+    return (link_a_vert ∩ link_b_vert ⊆ link_ab) && (length(link_a_edge ∩ link_b_edge) == 0)
 end

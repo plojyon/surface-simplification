@@ -1,3 +1,4 @@
+println("Julia running. Loading packages")
 using DataStructures
 using FileIO
 using Meshes
@@ -5,7 +6,9 @@ using MeshIO
 using Makie
 using GLMakie
 using GeometryBasics
+using ProgressBars
 
+println("Including files")
 include("contractions.jl")
 include("visualisation.jl")
 
@@ -35,12 +38,29 @@ function loadsc(path)
     CreateSimplicialComplex2D(data_triangles)
 end
 
-
+println("Loading bunny")
 bunidata = loadsc("bunny/reconstruction/bun_zipper.ply")
 buni = initialContractedSimplicialComplex2D(bunidata)
 
-# for i in 1:100
-#     contract!(buni)
-# end
+pq = PriorityQueue()
+for (edge, triangle) in ProgressBar(buni.contracted._edge_to_triangles)
+    pq[edge] = error(buni, edge)
+end
+
+println("Starting contractions")
+for i in ProgressBar(1:3)
+    first = dequeue!(pq)
+    while !issafe(buni, first)
+        first = dequeue!(pq)
+    end
+
+    new_vertex = contract!(buni, first)
+    for edge in buni.contracted._vertex_to_edges[new_vertex]
+        pq[edge] = error(buni, edge)
+        for triangle in buni.contracted._edge_to_triangles[edge]
+            pq[triangle] = error(buni, triangle)
+        end
+    end
+end
 
 visualize(buni)

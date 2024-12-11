@@ -1,10 +1,10 @@
 # Surface simplification
 
-TODO: simplify surface
+TODO: fix code
 
 - [x] Visualization
 - [x] Priority queue / heap
-- [ ] issafe
-- [ ] Contract function
-- [ ] Error metric
+- [x] issafe
+- [x] Contract function
+- [x] Error metric
 - [ ] Report

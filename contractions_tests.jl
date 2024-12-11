@@ -1,6 +1,6 @@
 include("contractions.jl")
 
-function print_struct_properties(obj::T) where T
+function print_struct_properties(obj::T) where {T}
     println("Properties of $(typeof(obj)):")
     for field in fieldnames(T)
         value = getfield(obj, field)
@@ -8,8 +8,8 @@ function print_struct_properties(obj::T) where T
     end
 end
 
-coords = [Vector([rand()*100, rand()*100,rand()*100]) for i in 1:9]
-torus = [(2,1,4), (4,1,3), (5,4,7), (6,5,8), (7,4,6), (7,1,8), (8,2,9), (7,9,1), (1,2,8), (4,5,2), (7,8,5), (3,6,4), (6,9,7), (1,9,3), (8,9,6), (3,2,5), (5,6,3), (2,3,9)]
+coords::Vector{Vector{Float32}} = [Vector([rand() * 100, rand() * 100, rand() * 100]) for i in 1:9]
+torus = [(2, 1, 4), (4, 1, 3), (5, 4, 7), (6, 5, 8), (7, 4, 6), (7, 1, 8), (8, 2, 9), (7, 9, 1), (1, 2, 8), (4, 5, 2), (7, 8, 5), (3, 6, 4), (6, 9, 7), (1, 9, 3), (8, 9, 6), (3, 2, 5), (5, 6, 3), (2, 3, 9)]
 
 simplicial_complex = SimplicialComplex2D(torus, coords)
 # println("Edges that contain 1")
@@ -76,7 +76,13 @@ simplicial_complex = SimplicialComplex2D(torus, coords)
 #     end
 # end
 
+println(" === contract tests === ")
 println(simplicial_complex)
 contracted = initialContractedSimplicialComplex2D(simplicial_complex)
-contracted = contract(contracted, (1, 2))
+contract!(contracted, (1, 2))
 println(contracted.contracted)
+
+println(" === getlink tests === ")
+println(getlink(simplicial_complex, 1))
+println(getlink(simplicial_complex, 2))
+println(getlink(simplicial_complex, (1, 2)))
