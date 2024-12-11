@@ -1,11 +1,20 @@
 println("Julia running. Loading packages")
+
+println("DataStructures")
 using DataStructures
+println("FileIO")
 using FileIO
+println("Meshes")
 using Meshes
+println("MeshIO")
 using MeshIO
+println("Makie")
 using Makie
+println("GLMakie")
 using GLMakie
+println("GeometryBasics")
 using GeometryBasics
+println("ProgressBars")
 using ProgressBars
 
 println("Including files")
@@ -50,7 +59,7 @@ end
 println("Starting contractions")
 for i in ProgressBar(1:3)
     first = dequeue!(pq)
-    while !issafe(buni, first)
+    while !issafe(buni.contracted, first)
         first = dequeue!(pq)
     end
 
