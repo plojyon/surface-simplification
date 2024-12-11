@@ -179,7 +179,7 @@ struct Plane
     end
 end
 
-function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float64}})
+function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float32}})
     a = coords[triangle[1]]
     b = coords[triangle[2]]
     c = coords[triangle[3]]
@@ -192,7 +192,7 @@ function planeFromTriangle(triangle::Triangle, coords::Array{Vector{Float64}})
 end
 
 function fundamental_quadratic(planes::Vector{Plane})
-    Q = Matrix{Float32}(undef, 4, 4)
+    Q = fill(0.0, 4, 4)
     for i in 1:length(planes)
         Q += planes[i].u * planes[i].u'
     end
