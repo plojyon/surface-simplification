@@ -25,5 +25,11 @@ function visualize(self::ContractedSimplicialComplex2D)
     mesh!(ax1, orig_mesh, color=:red)
     mesh!(ax2, contracted_mesh, color=:blue)
 
+    # hightlight points 1, 2, 3
+    # scatter!(ax1, [GeometryBasics.Point{3,Float32}(buni.original.coords[1])], color=:green)
+    # scatter!(ax1, [GeometryBasics.Point{3,Float32}(buni.original.coords[2])], color=:green)
+    # scatter!(ax1, [GeometryBasics.Point{3,Float32}(buni.original.coords[3])], color=:green)
+
+
     display(fig)
 end

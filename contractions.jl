@@ -3,10 +3,10 @@ using LinearAlgebra
 const Triangle = Tuple{Int,Int,Int}
 const Edge = Tuple{Int,Int}
 
-ε = Float32[3.91429e-11 -5.43751e-11 -3.08725e-11 1.96103e-10;
-    1.17945e-10 -1.32584e-10 3.3373e-11 1.73932e-10;
-    3.66283e-11 2.78203e-11 1.27592e-10 -1.06424e-10;
-    -7.36818e-11 -3.01675e-11 1.98111e-11 -3.58098e-11]
+ε = Float32[1.00296 1.08149 1.00774 1.03307;
+    1.07346 1.01528 1.07055 1.05825;
+    0.991741 0.998597 1.04848 0.9986;
+    1.07503 1.08673 1.08011 1.08693]
 
 function triangleEdges(triangle::Triangle)
     return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[1], triangle[3])]
@@ -209,7 +209,7 @@ function Eh(point::Vector{Float32}, Q::Matrix{Float32})
 end
 
 function minEh(Q::Matrix{Float32})
-    return Q[1:3, 1:3] \ [0; 0; 0]
+    return (Q.*ε)[1:3, 1:3] \ [0; 0; 0]
 end
 
 # napisal Yon Ploj (poglej git history)
