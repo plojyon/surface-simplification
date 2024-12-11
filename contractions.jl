@@ -252,7 +252,7 @@ function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
 
     # 2) substitute c for a and for b wherever they occur in the remaining set of
     # vertices, edges, and triangles (removing resulting duplications making sure L is a set.)
-    c_coords = minCForEdgeContraction(K, edge)
+    c_coords, _ = minCForEdgeContraction(K, edge)
     c = length(K.contracted.coords) + 1
     push!(K.contracted.coords, c_coords)
 
