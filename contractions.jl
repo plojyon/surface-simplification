@@ -258,6 +258,7 @@ function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
 
     replaceVertexInEdgesAndTriangles(K.contracted, edge[1], c)
     replaceVertexInEdgesAndTriangles(K.contracted, edge[2], c)
+    c
 end
 
 
