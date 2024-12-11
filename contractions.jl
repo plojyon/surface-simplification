@@ -3,6 +3,11 @@ using LinearAlgebra
 const Triangle = Tuple{Int,Int,Int}
 const Edge = Tuple{Int,Int}
 
+ε = Float32[3.91429e-11 -5.43751e-11 -3.08725e-11 1.96103e-10;
+    1.17945e-10 -1.32584e-10 3.3373e-11 1.73932e-10;
+    3.66283e-11 2.78203e-11 1.27592e-10 -1.06424e-10;
+    -7.36818e-11 -3.01675e-11 1.98111e-11 -3.58098e-11]
+
 function triangleEdges(triangle::Triangle)
     return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[1], triangle[3])]
 end
@@ -204,7 +209,6 @@ function Eh(point::Vector{Float32}, Q::Matrix{Float32})
 end
 
 function minEh(Q::Matrix{Float32})
-    print(Q)
     return Q[1:3, 1:3] \ [0; 0; 0]
 end
 
@@ -229,7 +233,7 @@ end
 
 function minCForEdgeContraction(K::ContractedSimplicialComplex2D, edge::Edge)
     Q = K._contracted_vertex_Q[edge[1]] + K._contracted_vertex_Q[edge[2]] - K._contracted_edge_Q[edge]
-    return minEh(Q)
+    return minEh(Q), Q
 end
 
 function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
