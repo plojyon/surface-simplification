@@ -250,7 +250,7 @@ function minCForEdgeContraction(K::ContractedSimplicialComplex2D, edge::Edge)
 end
 
 function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
-    x,y = getlink(K.contracted, edge)
+    x, y = getlink(K.contracted, edge)
 
     # 1) remove ab, abx, and aby
     # remove edge
