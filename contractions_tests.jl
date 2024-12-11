@@ -79,10 +79,35 @@ simplicial_complex = SimplicialComplex2D(torus, coords)
 println(" === contract tests === ")
 println(simplicial_complex)
 contracted = initialContractedSimplicialComplex2D(simplicial_complex)
-contract!(contracted, (1, 2))
-println(contracted.contracted)
+c = contract!(contracted, (1, 2))
+println(" - the edge (1, 2) does not exist anymore")
+println("result: ", !haskey(contracted.contracted._edge_to_triangles, (1, 2)))
 
-println(" === getlink tests === ")
-println(getlink(simplicial_complex, 1))
-println(getlink(simplicial_complex, 2))
-println(getlink(simplicial_complex, (1, 2)))
+println(" - all edges have Q matrix")
+is_missing = false
+for edge in edges(contracted.contracted)
+    if !haskey(contracted._contracted_edge_Q, edge)
+        global is_missing
+        println("edge $edge does not have Q matrix")
+        is_missing = true
+    end
+end
+println("result: ", !is_missing)
+
+println(" - all triangles have Q matrix")
+is_missing = false
+for triangle in triangles(contracted.contracted)
+    if !haskey(contracted._contracted_triangle_Q, triangle)
+        global is_missing
+        println("triangle $triangle does not have Q matrix")
+        is_missing = true
+    end
+end
+println("result: ", !is_missing)
+
+# println(" === getlink tests === ")
+# println(getlink(simplicial_complex, 1))
+# println(getlink(simplicial_complex, 2))
+# println(getlink(simplicial_complex, (1, 2)))
+
+#println(error(contracted, (1, 2)))

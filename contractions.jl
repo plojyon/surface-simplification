@@ -80,17 +80,39 @@ function removeEdge(K::SimplicialComplex2D, edge::Edge)
     delete!(K._vertex_to_edges[edge[2]], edge)
 end
 
-function removeTriangle(K::SimplicialComplex2D, triangle::Triangle)
+function removeTriangleAndEdges(K::SimplicialComplex2D, triangle::Triangle)
     for edge in [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[3], triangle[1])]
-        delete!(K._edge_to_triangles[edge], triangle)
+        delete!(K._edge_to_triangles, edge)
+        removeEdge(K, edge)
+    end
+end
+
+struct ContractedSimplicialComplex2D
+    original::SimplicialComplex2D
+    contracted::SimplicialComplex2D
+
+    _contracted_triangle_Q::Dict{Triangle,Matrix{Float32}}
+    _contracted_edge_Q::Dict{Edge,Matrix{Float32}}
+    _contracted_vertex_Q::Dict{Int,Matrix{Float32}}
+
+    function ContractedSimplicialComplex2D(original, contracted)
+        _contracted_triangle_Q = Dict{Triangle,Matrix{Float32}}()
+        _contracted_edge_Q = Dict{Edge,Matrix{Float32}}()
+        _contracted_vertex_Q = Dict{Int,Matrix{Float32}}()
+
+        new(original, contracted, _contracted_triangle_Q, _contracted_edge_Q, _contracted_vertex_Q)
     end
 end
 
 # replaces the old_vertex with the new_vertex in the simplicial complex K
 # does not handle adding new coords
-function replaceVertexInEdgesAndTriangles(K::SimplicialComplex2D, old_vertex::Int, new_vertex::Int)
+function replaceVertexInEdgesAndTriangles(CK::ContractedSimplicialComplex2D, old_vertex::Int, new_vertex::Int)
+    K = CK.contracted
     delete!(K.vertices, old_vertex)
     push!(K.vertices, new_vertex)
+
+    CK._contracted_vertex_Q[new_vertex] = CK._contracted_vertex_Q[old_vertex]
+    delete!(CK._contracted_vertex_Q, old_vertex)
 
     for edge in K._vertex_to_edges[old_vertex]
         # construct the new edge with the new vertex and remove the old one
@@ -110,6 +132,10 @@ function replaceVertexInEdgesAndTriangles(K::SimplicialComplex2D, old_vertex::In
         pushToSetDict!(K._vertex_to_edges, new_edge[1], new_edge)
         pushToSetDict!(K._vertex_to_edges, new_edge[2], new_edge)
 
+        # add Q matrix for the new edge
+        CK._contracted_edge_Q[new_edge] = CK._contracted_edge_Q[edge]
+        delete!(CK._contracted_edge_Q, edge)
+
         for triangle in K._edge_to_triangles[edge]
             new_triangle = sortTriangle(Tuple([vertex == old_vertex ? new_vertex : vertex for vertex in triangle]))
 
@@ -122,28 +148,15 @@ function replaceVertexInEdgesAndTriangles(K::SimplicialComplex2D, old_vertex::In
                     pushToSetDict!(K._edge_to_triangles, new_edge, new_triangle)
                 end
             end
+
+            # add Q matrix for the new triangle
+            CK._contracted_triangle_Q[new_triangle] = CK._contracted_triangle_Q[triangle]
+            delete!(CK._contracted_triangle_Q, triangle)
         end
         delete!(K._edge_to_triangles, edge)
     end
 
     delete!(K._vertex_to_edges, old_vertex)
-end
-
-struct ContractedSimplicialComplex2D
-    original::SimplicialComplex2D
-    contracted::SimplicialComplex2D
-
-    _contracted_triangle_Q::Dict{Triangle,Matrix{Float32}}
-    _contracted_edge_Q::Dict{Edge,Matrix{Float32}}
-    _contracted_vertex_Q::Dict{Int,Matrix{Float32}}
-
-    function ContractedSimplicialComplex2D(original, contracted)
-        _contracted_triangle_Q = Dict{Triangle,Matrix{Float32}}()
-        _contracted_edge_Q = Dict{Edge,Matrix{Float32}}()
-        _contracted_vertex_Q = Dict{Int,Matrix{Float32}}()
-
-        new(original, contracted, _contracted_triangle_Q, _contracted_edge_Q, _contracted_vertex_Q)
-    end
 end
 
 function initialContractedSimplicialComplex2D(K::SimplicialComplex2D)
@@ -237,6 +250,8 @@ function minCForEdgeContraction(K::ContractedSimplicialComplex2D, edge::Edge)
 end
 
 function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
+    x,y = getlink(K.contracted, edge)
+
     # 1) remove ab, abx, and aby
     # remove edge
     delete!(K.contracted._vertex_to_edges[edge[1]], edge)
@@ -252,13 +267,26 @@ function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
 
     # 2) substitute c for a and for b wherever they occur in the remaining set of
     # vertices, edges, and triangles (removing resulting duplications making sure L is a set.)
-    c_coords, _ = minCForEdgeContraction(K, edge)
+    c_coords, Qc = minCForEdgeContraction(K, edge)
     c = length(K.contracted.coords) + 1
     push!(K.contracted.coords, c_coords)
 
-    replaceVertexInEdgesAndTriangles(K.contracted, edge[1], c)
-    replaceVertexInEdgesAndTriangles(K.contracted, edge[2], c)
-    c
+    # store Q matrices for later
+    Qax = K._contracted_edge_Q[sortEdge(Tuple([edge[1], x]))]
+    Qbx = K._contracted_edge_Q[sortEdge(Tuple([edge[2], x]))]
+    Qay = K._contracted_edge_Q[sortEdge(Tuple([edge[1], y]))]
+    Qby = K._contracted_edge_Q[sortEdge(Tuple([edge[2], y]))]
+    Qabx = K._contracted_triangle_Q[sortTriangle(Tuple([edge[1], edge[2], x]))]
+    Qaby = K._contracted_triangle_Q[sortTriangle(Tuple([edge[1], edge[2], y]))]
+
+    replaceVertexInEdgesAndTriangles(K, edge[1], c)
+    replaceVertexInEdgesAndTriangles(K, edge[2], c)
+
+    # update c, cx and cy Q matrices
+    K._contracted_vertex_Q[c] = Qc
+    K._contracted_edge_Q[sortEdge((c, x))] = Qax + Qbx - Qabx
+    K._contracted_edge_Q[sortEdge((c, y))] = Qay + Qby - Qaby
+    return c
 end
 
 
