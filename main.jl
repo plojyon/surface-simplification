@@ -21,6 +21,14 @@ println("Including files")
 include("contractions.jl")
 include("visualisation.jl")
 
+function findPointInRadius(vertex, vertexSet, radius)
+    for v in vertexSet
+        if norm(vertex - v) < radius
+            return v
+        end
+    end
+    return nothing
+end
 
 function CreateSimplicialComplex2D(mesh)
     coords = Vector{Vector{Float32}}()
@@ -28,11 +36,16 @@ function CreateSimplicialComplex2D(mesh)
 
     triangles_ = Vector{Tuple{Int,Int,Int}}()
 
-    for triangle in mesh
+    for triangle in ProgressBar(mesh)
         for vertex in triangle
-            if !haskey(anticoords, vertex)
-                push!(coords, collect(vertex))
-                anticoords[collect(vertex)] = length(coords)
+            arr_vertex = collect(vertex)
+            close_point = findPointInRadius(arr_vertex, coords, 0.0001)
+
+            if close_point == nothing
+                push!(coords, arr_vertex)
+                anticoords[arr_vertex] = length(coords)
+            else
+                anticoords[arr_vertex] = anticoords[close_point]
             end
         end
         push!(triangles_, (anticoords[collect(triangle[1])], anticoords[collect(triangle[2])], anticoords[collect(triangle[3])]))
@@ -46,6 +59,7 @@ function loadsc(path)
     data_triangles = Array([Array([Tuple([round(z, digits=5) for z in y]) for y in x]) for x in data])
     CreateSimplicialComplex2D(data_triangles)
 end
+
 
 println("Loading bunny")
 bunidata = loadsc("bunny/reconstruction/bun_zipper.ply")
