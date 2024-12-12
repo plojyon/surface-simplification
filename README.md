@@ -7,4 +7,6 @@ TODO: fix code
 - [x] issafe
 - [x] Contract function
 - [x] Error metric
+- [ ] Fill holes in surface
+- [ ] Main loop
 - [ ] Report
