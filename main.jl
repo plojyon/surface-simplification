@@ -36,9 +36,9 @@ function cachesc(sc, path)
     save_object("$path.jld2", sc)
 end
 
-function mymain()
-    println("Loading bunny")
-    #bunidata = loadsc("bunny/reconstruction/bun_zipper.ply")
+function mymain(scpath)
+    println("Loading bunny ", scpath)
+    # bunidata = loadsc("ply/$scpath.ply")
     bunidata = deserialize("bunidata.dat")
 
     # rotate by 90 degrees around the x-axis
@@ -71,7 +71,6 @@ function mymain()
     # pq[first(first(pq))]
 
 
-
     fig = Figure(size=(1920, 1080))
     ax = Axis3(fig[1, 1], aspect=:data)
 
@@ -83,8 +82,8 @@ function mymain()
     lastlog = -1000000000
     img_count = 0
     error_hist = []
-    record(fig, "bunny_prod.mp4") do io
-        tqdm = ProgressBar(1:340000)
+    record(fig, "videos/$scpath.mp4") do io
+        tqdm = ProgressBar(1:length(buni.contracted.vertices)*10)
         for contraction_count in tqdm
             # if pq[first(first(pq))] > 0.8
             #     break
@@ -135,4 +134,21 @@ function mymain()
     display(fig)
 end
 
-mymain()
+mymain("bunny")
+# mymain("airplane")
+# mymain("ant")
+# mymain("beethoven")
+# mymain("cow")
+# mymain("cube")
+# mymain("f16")
+# mymain("galleon")
+# mymain("head1")
+# mymain("icosahedron")
+
+# mymain("porsche")
+# mymain("teapot")
+# mymain("tennis_shoe")
+# mymain("turbine")
+
+# he is last because he is big
+# mymain("motorbike")
