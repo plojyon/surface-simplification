@@ -9,6 +9,9 @@ function visualize(self::SimplicialComplex2D)
     Makie.mesh(tomesh(self))
 end
 
+function visualize(self::ContractedSimplicialComplex2D)
+    visualize(self, GeometryBasics.Point{3,Float32}[])
+end
 
 function visualize(self::ContractedSimplicialComplex2D, highlights::Array{GeometryBasics.Point{3,Float32}})
     fig = Figure(size=(800, 600))
@@ -28,6 +31,7 @@ function visualize(self::ContractedSimplicialComplex2D, highlights::Array{Geomet
     # hightlight points
     if length(highlights) > 0
         scatter!(ax1, highlights, color=:green)
+        scatter!(ax2, highlights, color=:green)
     end
 
     display(fig)

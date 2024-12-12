@@ -8,64 +8,49 @@ println("Meshes")
 using Meshes
 println("MeshIO")
 using MeshIO
-println("Makie")
-using Makie
-println("GLMakie")
-using GLMakie
 println("GeometryBasics")
 using GeometryBasics
 println("ProgressBars")
 using ProgressBars
+println("Serialization")
+using Serialization
+println("JSON3")
+using JSON3
+println("Serialization")
+using Serialization
+println("JLD2")
+using JLD2
+println("Makie")
+using Makie
+println("GLMakie")
+using GLMakie
 
 println("Including files")
 include("contractions.jl")
 include("visualisation.jl")
+include("preprocessing.jl")
 
-function findPointInRadius(vertex, vertexSet, radius)
-    for v in vertexSet
-        if norm(vertex - v) < radius
-            return v
-        end
-    end
-    return nothing
+
+
+function cachesc(sc, path)
+    JSON3.write("$path.json", sc)
+    serialize("$path.dat", sc)
+    save_object("$path.jld2", sc)
 end
-
-function CreateSimplicialComplex2D(mesh)
-    coords = Vector{Vector{Float32}}()
-    anticoords = Dict{Vector{Float32},Int}()
-
-    triangles_ = Vector{Tuple{Int,Int,Int}}()
-
-    for triangle in ProgressBar(mesh)
-        for vertex in triangle
-            arr_vertex = collect(vertex)
-            close_point = findPointInRadius(arr_vertex, coords, 0.0001)
-
-            if close_point == nothing
-                push!(coords, arr_vertex)
-                anticoords[arr_vertex] = length(coords)
-            else
-                anticoords[arr_vertex] = anticoords[close_point]
-            end
-        end
-        push!(triangles_, (anticoords[collect(triangle[1])], anticoords[collect(triangle[2])], anticoords[collect(triangle[3])]))
-    end
-
-    SimplicialComplex2D(triangles_, coords)
-end
-
-function loadsc(path)
-    data = load(path)
-    data_triangles = Array([Array([Tuple([round(z, digits=5) for z in y]) for y in x]) for x in data])
-    CreateSimplicialComplex2D(data_triangles)
-end
-
 
 println("Loading bunny")
-bunidata = loadsc("bunny/reconstruction/bun_zipper.ply")
+#bunidata = loadsc("bunny/reconstruction/bun_zipper.ply")
+bunidata = deserialize("bunidata.dat")
 buni = initialContractedSimplicialComplex2D(bunidata)
+fillholes!(buni.contracted)
 
-visualize(buni)
+marked_vertices = Set{Int}()
+for edge in getborder(buni.original)
+    push!(marked_vertices, edge[1])
+    push!(marked_vertices, edge[2])
+end
+marks::Vector{GeometryBasics.Point{3,Float32}} = [GeometryBasics.Point{3,Float32}(buni.original.coords[x]) for x in marked_vertices]
+visualize(buni, marks)
 
 # pq = PriorityQueue()
 # for (edge, triangle) in ProgressBar(buni.contracted._edge_to_triangles)

@@ -68,7 +68,7 @@ struct SimplicialComplex2D
 end
 
 function edges(K::SimplicialComplex2D)
-    out = Set(union(values(K._vertex_to_edges)...))
+    Set(union(values(K._vertex_to_edges)...))
 end
 
 function triangles(K::SimplicialComplex2D)
@@ -289,6 +289,17 @@ function contract!(K::ContractedSimplicialComplex2D, edge::Edge)
     return c
 end
 
+function neighborhood(K::SimplicialComplex2D, vertex::Int)
+    neighborhoodTriangles = Set{Triangle}()
+
+    for edge in K._vertex_to_edges[vertex]
+        for triangle in K._edge_to_triangles[edge]
+            push!(neighborhoodTriangles, triangle)
+        end
+    end
+
+    return SimplicialComplex2D(collect(neighborhoodTriangles), K.coords)
+end
 
 function getlink(K::SimplicialComplex2D, vertex::Int)
     linkvertices = Set{Int}()
