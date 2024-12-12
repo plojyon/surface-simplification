@@ -5,18 +5,14 @@ function scx2mesh(sc::SimplicialComplex2D)
     return GeometryBasics.Mesh(vertices, faces)
 end
 
-function visualize(self::SimplicialComplex2D)
-    Makie.mesh(tomesh(self))
-end
-
 function visualize(self::ContractedSimplicialComplex2D)
     visualize(self, GeometryBasics.Point{3,Float32}[])
 end
 
 function visualize(self::ContractedSimplicialComplex2D, highlights::Array{GeometryBasics.Point{3,Float32}})
     fig = Figure(size=(800, 600))
-    ax1 = Axis3(fig[1, 1])
-    ax2 = Axis3(fig[1, 2])
+    ax1 = Axis3(fig[1, 1], aspect=:data)
+    ax2 = Axis3(fig[1, 2], aspect=:data)
 
     orig_mesh = scx2mesh(self.original)
     contracted_mesh = scx2mesh(self.contracted)
@@ -34,8 +30,28 @@ function visualize(self::ContractedSimplicialComplex2D, highlights::Array{Geomet
         scatter!(ax2, highlights, color=:green)
     end
 
-    # wireframe!(ax1, orig_mesh, color=:black)
-    # wireframe!(ax2, contracted_mesh, color=:black)
+    wireframe!(ax1, orig_mesh, color=:black)
+    wireframe!(ax2, contracted_mesh, color=:black)
 
     display(fig)
+end
+
+function visualize(self::SimplicialComplex2D)
+    visualize(self, "")
+end
+function visualize(self::SimplicialComplex2D, save_file::String)
+    fig = Figure(size=(800, 600))
+    ax1 = Axis3(fig[1, 1], aspect=:data)
+
+    orig_mesh = scx2mesh(self)
+
+    mesh!(ax1, orig_mesh, color=:lime, shading=false)
+
+    wireframe!(ax1, orig_mesh, color=:black, linewidth=0.5)
+
+    if save_file != ""
+        savefig(fig, save_file)
+    else
+        display(fig)
+    end
 end

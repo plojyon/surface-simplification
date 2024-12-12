@@ -221,8 +221,9 @@ function Eh(point::Vector{Float32}, Q::Matrix{Float32})
 end
 
 function minEh(Q::Matrix{Float32})
-    return Q[1:3, 1:3] \ [0; 0; 0]
-    return (Q.*ε)[1:3, 1:3] \ [0; 0; 0]
+    nbsp = nullspace(Q[1:3, :])
+    vector_with_max_last_element = nbsp[:, argmax(abs.(nbsp[end, :]))]
+    return (vector_with_max_last_element/vector_with_max_last_element[end])[1:3]
 end
 
 # napisal Yon Ploj (poglej git history)
