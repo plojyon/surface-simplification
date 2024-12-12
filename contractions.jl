@@ -139,19 +139,21 @@ function replaceVertexInEdgesAndTriangles(CK::ContractedSimplicialComplex2D, old
         for triangle in K._edge_to_triangles[edge]
             new_triangle = sortTriangle(Tuple([vertex == old_vertex ? new_vertex : vertex for vertex in triangle]))
 
+            pushToSetDict!(K._edge_to_triangles, new_edge, new_triangle)
+
             # triangle is stored in 3 entries edges => triangles
             for edge_of_trig in triangleEdges(triangle)
                 # we do not need to delete the triangle from the old edge
                 # because the old edge will be removed as a key
                 if edge_of_trig != edge
                     delete!(K._edge_to_triangles[edge_of_trig], triangle)
-                    pushToSetDict!(K._edge_to_triangles, new_edge, new_triangle)
+                    pushToSetDict!(K._edge_to_triangles, edge_of_trig, new_triangle)
                 end
             end
 
             # add Q matrix for the new triangle
             CK._contracted_triangle_Q[new_triangle] = CK._contracted_triangle_Q[triangle]
-            delete!(CK._contracted_triangle_Q, triangle)
+            # delete!(CK._contracted_triangle_Q, triangle)
         end
         delete!(K._edge_to_triangles, edge)
     end
@@ -160,14 +162,11 @@ function replaceVertexInEdgesAndTriangles(CK::ContractedSimplicialComplex2D, old
 end
 
 function initialContractedSimplicialComplex2D(K::SimplicialComplex2D)
-    contracted = ContractedSimplicialComplex2D(K, deepcopy(K))
-
-    calculateFundamentalQuadratics(contracted)
-    return contracted
+    ContractedSimplicialComplex2D(K, deepcopy(K))
 end
 
 # fills in the _triangle_Q, _edge_Q, and _vertex_Q fields of K
-function calculateFundamentalQuadratics(K::ContractedSimplicialComplex2D)
+function calculateFundamentalQuadratics!(K::ContractedSimplicialComplex2D)
     for triangle in triangles(K.contracted)
         K._contracted_triangle_Q[triangle] = fundamental_quadratic([planeFromTriangle(triangle, K.contracted.coords)])
     end
@@ -222,6 +221,7 @@ function Eh(point::Vector{Float32}, Q::Matrix{Float32})
 end
 
 function minEh(Q::Matrix{Float32})
+    return Q[1:3, 1:3] \ [0; 0; 0]
     return (Q.*ε)[1:3, 1:3] \ [0; 0; 0]
 end
 
@@ -339,6 +339,10 @@ function issafe(K::SimplicialComplex2D, edge::Edge)
     # check that edge exists
     if !haskey(K._edge_to_triangles, edge)
         return false
+    end
+    if length(K._edge_to_triangles[edge]) == 0
+        println("poopy")
+        crash # do not define this variable
     end
     # check link condition lemma
     # lk a \cap lk b \subseteq lk ab

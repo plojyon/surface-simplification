@@ -34,5 +34,8 @@ function visualize(self::ContractedSimplicialComplex2D, highlights::Array{Geomet
         scatter!(ax2, highlights, color=:green)
     end
 
+    # wireframe!(ax1, orig_mesh, color=:black)
+    # wireframe!(ax2, contracted_mesh, color=:black)
+
     display(fig)
 end

@@ -30,8 +30,6 @@ include("contractions.jl")
 include("visualisation.jl")
 include("preprocessing.jl")
 
-
-
 function cachesc(sc, path)
     JSON3.write("$path.json", sc)
     serialize("$path.dat", sc)
@@ -43,14 +41,16 @@ println("Loading bunny")
 bunidata = deserialize("bunidata.dat")
 buni = initialContractedSimplicialComplex2D(bunidata)
 fillholes!(buni.contracted)
+calculateFundamentalQuadratics!(buni)
 
-marked_vertices = Set{Int}()
-for edge in getborder(buni.original)
-    push!(marked_vertices, edge[1])
-    push!(marked_vertices, edge[2])
-end
-marks::Vector{GeometryBasics.Point{3,Float32}} = [GeometryBasics.Point{3,Float32}(buni.original.coords[x]) for x in marked_vertices]
-visualize(buni, marks)
+# # mark hole borders
+# marked_vertices = Set{Int}()
+# for edge in getborder(buni.original)
+#     push!(marked_vertices, edge[1])
+#     push!(marked_vertices, edge[2])
+# end
+# marks::Vector{GeometryBasics.Point{3,Float32}} = [GeometryBasics.Point{3,Float32}(buni.original.coords[x]) for x in marked_vertices]
+# visualize(buni, marks)
 
 # pq = PriorityQueue()
 # for (edge, triangle) in ProgressBar(buni.contracted._edge_to_triangles)
@@ -73,3 +73,27 @@ visualize(buni, marks)
 #     end
 # end
 
+println(" === contract tests === ")
+contracted = buni
+
+println(" - all edges have Q matrix")
+is_missing = false
+for edge in edges(contracted.contracted)
+    if !haskey(contracted._contracted_edge_Q, edge)
+        global is_missing
+        println("edge $edge does not have Q matrix")
+        is_missing = true
+    end
+end
+println("result: ", !is_missing)
+
+println(" - all triangles have Q matrix")
+is_missing = false
+for triangle in triangles(contracted.contracted)
+    if !haskey(contracted._contracted_triangle_Q, triangle)
+        global is_missing
+        println("triangle $triangle does not have Q matrix")
+        is_missing = true
+    end
+end
+println("result: ", !is_missing)
