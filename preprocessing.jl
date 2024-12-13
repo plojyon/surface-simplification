@@ -1,3 +1,5 @@
+using NearestNeighbors
+
 function getborder(scx::SimplicialComplex2D)
     border = Set{Edge}()
     for edge in edges(scx)
@@ -9,9 +11,11 @@ function getborder(scx::SimplicialComplex2D)
 end
 
 function getholes(scx::SimplicialComplex2D)
+    println("Finding holes")
     holes = Set{Vector{Edge}}()
     border = getborder(scx)
     while length(border) > 0
+        println("Holes left: $(length(border))")
         edge = first(border)
 
         hole = Vector{Edge}([edge]) # edges comprising the hole
@@ -34,7 +38,8 @@ end
 
 function fillholes!(scx::SimplicialComplex2D)
     holes = getholes(scx)
-    for hole in holes
+    println("Filling $(length(holes)) holes")
+    for hole in ProgressBar(holes)
         vertices = Vector{Int}()
         for edge in hole
             push!(vertices, edge[1])
@@ -73,19 +78,30 @@ end
 function CreateSimplicialComplex2D(mesh)
     coords = Vector{Vector{Float32}}()
     anticoords = Dict{Vector{Float32},Int}()
-
     triangles_ = Vector{Tuple{Int,Int,Int}}()
+
+    treecoords = Vector{Vector{Float32}}()
+    for triangle in mesh
+        for vertex in triangle
+            push!(treecoords, collect(vertex))
+        end
+    end
+    kdtree = KDTree(hcat(treecoords...); leafsize=25)
 
     for triangle in ProgressBar(mesh)
         for vertex in triangle
             arr_vertex = collect(vertex)
-            close_point = findPointInRadius(arr_vertex, coords, 0.0001)
 
-            if isnothing(close_point)
+            # find close neighbours
+            idxs = inrange(kdtree, arr_vertex, 0.001)
+            neighs = Set{Vector{Float32}}([treecoords[i] for i in idxs])
+            intersect!(neighs, keys(anticoords))
+
+            if length(neighs) == 0
                 push!(coords, arr_vertex)
                 anticoords[arr_vertex] = length(coords)
             else
-                anticoords[arr_vertex] = anticoords[close_point]
+                anticoords[arr_vertex] = anticoords[first(neighs)]
             end
         end
         push!(triangles_, (anticoords[collect(triangle[1])], anticoords[collect(triangle[2])], anticoords[collect(triangle[3])]))

@@ -30,24 +30,21 @@ include("contractions.jl")
 include("visualisation.jl")
 include("preprocessing.jl")
 
-function cachesc(sc, path)
-    JSON3.write("$path.json", sc)
-    serialize("$path.dat", sc)
-    save_object("$path.jld2", sc)
-end
-
 function mymain(scpath)
     println("Loading bunny ", scpath)
-    # bunidata = loadsc("ply/$scpath.ply")
-    bunidata = deserialize("bunidata.dat")
+    bunidata = loadsc("ply/$scpath.ply")
 
     # rotate by 90 degrees around the x-axis
+    println("Get rotated lmao")
     for vertex in bunidata.coords
         vertex[2], vertex[3] = vertex[2] * cos(π / 2) - vertex[3] * sin(π / 2), vertex[2] * sin(π / 2) + vertex[3] * cos(π / 2)
     end
 
+    println("Constructing initial contracted simplicial complex")
     buni = initialContractedSimplicialComplex2D(bunidata)
+    println("Filling holes")
     fillholes!(buni.contracted)
+    println("Calculating fundamental quadratics")
     calculateFundamentalQuadratics!(buni)
 
     println("Constructing initial priority queue")
@@ -134,7 +131,7 @@ function mymain(scpath)
     display(fig)
 end
 
-mymain("bunny")
+mymain("motorbike")
 # mymain("airplane")
 # mymain("ant")
 # mymain("beethoven")
