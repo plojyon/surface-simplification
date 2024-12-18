@@ -3,8 +3,12 @@ using NearestNeighbors
 function getborder(scx::SimplicialComplex2D)
     border = Set{Edge}()
     for edge in edges(scx)
-        if length(scx._edge_to_triangles[edge]) != 2
+        trigs = length(scx._edge_to_triangles[edge])
+        if trigs == 1
             push!(border, edge)
+        end
+        if trigs > 2
+            throw("NOT A SURFACE: Edge $edge is part of $trigs triangles")
         end
     end
     border
@@ -23,7 +27,16 @@ function getholes(scx::SimplicialComplex2D)
         finiš = edge[2]
 
         # walk around the hole
+        seen = Set{Int}([start])
         while start != finiš
+            if finiš in seen
+                start = finiš
+                finiš = edge[1] == finiš ? edge[2] : edge[1]
+                seen = Set{Int}([start])
+                hole = Vector{Edge}([edge])
+            end
+            push!(seen, finiš)
+
             edges = Set{Edge}(filter(e -> finiš in e, border))
             setdiff!(edges, Set([edge]))
             edge = pop!(edges)
@@ -93,7 +106,7 @@ function CreateSimplicialComplex2D(mesh)
             arr_vertex = collect(vertex)
 
             # find close neighbours
-            idxs = inrange(kdtree, arr_vertex, 0.001)
+            idxs = inrange(kdtree, arr_vertex, 0.0002)
             neighs = Set{Vector{Float32}}([treecoords[i] for i in idxs])
             intersect!(neighs, keys(anticoords))
 
