@@ -6,6 +6,7 @@ function triangleEdgesNotSorted(triangle::Triangle)
 end
 
 function orientedTriangles(sc::SimplicialComplex2D)
+    centroid = mean(sc.coords, dims=1)
     all_trig = triangles(sc) # check sorted
     not_oriented_queue = [first(all_trig)]
     oriented_triangles = Dict()
@@ -27,9 +28,15 @@ function orientedTriangles(sc::SimplicialComplex2D)
             end
         end
 
-        # If it's the first triangle, we can orient it arbitrarily
+        # If it's the first triangle, orient it so the normal points away from the centroid
         if length(oriented_triangles) == 0
-            oriented_triangles[curr_trig] = (curr_trig[3], curr_trig[2], curr_trig[1])
+            oriented_triangles[curr_trig] = curr_trig
+            
+            normal_vector = cross(sc.coords[curr_trig[2], :] - sc.coords[curr_trig[1], :], sc.coords[curr_trig[3], :] - sc.coords[curr_trig[1], :])
+            trig_centroid = mean(sc.coords[curr_trig, :], dims=1)
+            if dot(normal_vector, trig_centroid - centroid) < 0
+                oriented_triangles[curr_trig] = (curr_trig[1], curr_trig[3], curr_trig[2])
+            end
         else
             # Check the orientation of the neighboring triangles
             for edge in triangleEdgesNotSorted(curr_trig)
