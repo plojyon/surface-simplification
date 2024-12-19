@@ -8,7 +8,7 @@ function getborder(scx::SimplicialComplex2D)
             push!(border, edge)
         end
         if trigs > 2
-            throw("NOT A SURFACE: Edge $edge is part of $trigs triangles")
+            throw("NOT A SURFACE: Edge $edge is part of $trigs triangles: $(scx._edge_to_triangles[edge])")
         end
     end
     border
@@ -79,15 +79,6 @@ function fillholes!(scx::SimplicialComplex2D)
     end
 end
 
-function findPointInRadius(vertex, vertexSet, radius)
-    for v in vertexSet
-        if norm(vertex - v) < radius
-            return v
-        end
-    end
-    return nothing
-end
-
 function CreateSimplicialComplex2D(mesh)
     coords = Vector{Vector{Float32}}()
     anticoords = Dict{Vector{Float32},Int}()
@@ -106,7 +97,7 @@ function CreateSimplicialComplex2D(mesh)
             arr_vertex = collect(vertex)
 
             # find close neighbours
-            idxs = inrange(kdtree, arr_vertex, 0.0002)
+            idxs = inrange(kdtree, arr_vertex, 0.0001)
             neighs = Set{Vector{Float32}}([treecoords[i] for i in idxs])
             intersect!(neighs, keys(anticoords))
 
