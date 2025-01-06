@@ -15,11 +15,11 @@ function getborder(scx::SimplicialComplex2D)
 end
 
 function getholes(scx::SimplicialComplex2D)
-    println("Finding holes")
+    println("Finding buttholes")
     holes = Set{Vector{Edge}}()
     border = getborder(scx)
     while length(border) > 0
-        println("Holes left: $(length(border))")
+        println("Buttholes left: $(length(border))")
         edge = first(border)
 
         hole = Vector{Edge}([edge]) # edges comprising the hole
@@ -51,7 +51,7 @@ end
 
 function fillholes!(scx::SimplicialComplex2D)
     holes = getholes(scx)
-    println("Filling $(length(holes)) holes")
+    println("Constipating $(length(holes)) buttholes")
     for hole in ProgressBar(holes)
         vertices = Vector{Int}()
         for edge in hole

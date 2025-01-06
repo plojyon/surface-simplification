@@ -42,7 +42,7 @@ function mymain(scpath)
 
     println("Constructing initial contracted simplicial complex")
     buni = initialContractedSimplicialComplex2D(bunidata)
-    println("Filling holes")
+    println("Filling buttholes")
     fillholes!(buni.contracted)
     println("Calculating fundamental quadratics")
     calculateFundamentalQuadratics!(buni)
@@ -80,8 +80,9 @@ function mymain(scpath)
     img_count = 0
     error_hist = []
     record(fig, "videos/$scpath.mp4") do io
-        tqdm = ProgressBar(1:length(buni.contracted.vertices)*10)
-        for contraction_count in tqdm
+        tqdm = ProgressBar(total=length(buni.original.vertices))
+        current_progress = 0
+        while true
             # if pq[first(first(pq))] > 0.8
             #     break
             # end
@@ -103,6 +104,11 @@ function mymain(scpath)
             for edge in buni.contracted._vertex_to_edges[new_vertex]
                 pq[edge] = error(buni, edge)
             end
+
+            new_progress = length(buni.original.vertices) - length(buni.contracted.vertices)
+            progress_diff = new_progress - current_progress
+            current_progress = new_progress
+            ProgressBars.update(tqdm, progress_diff)
 
             thislog = log(length(buni.contracted.vertices))
             if abs(thislog - lastlog) > 0.01
@@ -131,7 +137,7 @@ function mymain(scpath)
     display(fig)
 end
 
-mymain("motorbike")
+mymain("bunny")
 # mymain("airplane")
 # mymain("ant")
 # mymain("beethoven")

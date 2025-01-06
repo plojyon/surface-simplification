@@ -1,12 +1,13 @@
 using Random
 using LinearAlgebra
+using Statistics
 
 function triangleEdgesNotSorted(triangle::Triangle)
     return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[3], triangle[1])]
 end
 
 function orientedTriangles(sc::SimplicialComplex2D)
-    centroid = mean(sc.coords, dims=1)
+    centroid = mean(sc.coords, dims=1)[1]
     all_trig = triangles(sc) # check sorted
     not_oriented_queue = [first(all_trig)]
     oriented_triangles = Dict()
@@ -31,9 +32,9 @@ function orientedTriangles(sc::SimplicialComplex2D)
         # If it's the first triangle, orient it so the normal points away from the centroid
         if length(oriented_triangles) == 0
             oriented_triangles[curr_trig] = curr_trig
-            
-            normal_vector = cross(sc.coords[curr_trig[2], :] - sc.coords[curr_trig[1], :], sc.coords[curr_trig[3], :] - sc.coords[curr_trig[1], :])
-            trig_centroid = mean(sc.coords[curr_trig, :], dims=1)
+
+            normal_vector = cross((sc.coords[curr_trig[2], :]-sc.coords[curr_trig[1], :])[1], (sc.coords[curr_trig[3], :]-sc.coords[curr_trig[1], :])[1])
+            trig_centroid = mean([sc.coords[curr_trig[1], :], sc.coords[curr_trig[2], :], sc.coords[curr_trig[3], :]], dims=1)[1][1]
             if dot(normal_vector, trig_centroid - centroid) < 0
                 oriented_triangles[curr_trig] = (curr_trig[1], curr_trig[3], curr_trig[2])
             end
@@ -101,7 +102,7 @@ end
 function visualize(self::SimplicialComplex2D)
     visualize(self, "")
 end
-function visualize(self::SimplicialComplex2D, save_file::String)
+function visualize(self::SimplicialComplex2D, highlights::Array{GeometryBasics.Point{3,Float32}}, save_file::String)
     fig = Figure(size=(800, 600))
     ax1 = Axis3(fig[1, 1], aspect=:data)
 
@@ -110,6 +111,11 @@ function visualize(self::SimplicialComplex2D, save_file::String)
     mesh!(ax1, orig_mesh, color=:lime)
 
     # wireframe!(ax1, orig_mesh, color=:black, linewidth=0.5)
+
+    # hightlight points
+    if length(highlights) > 0
+        scatter!(ax1, highlights, color=:red)
+    end
 
     if save_file != ""
         savefig(fig, save_file)
