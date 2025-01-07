@@ -130,14 +130,10 @@ function mymain(scpath)
         end
     end
 
-    # plot the error history
-    fig = Figure()
-    ax = Axis(fig[1, 1])
-    lines!(ax, 1:length(error_hist), error_hist, color=:blue)
-    display(fig)
+    println("contracted $scpath. lp")
 end
 
-mymain("bunny")
+mymain("torus")
 # mymain("airplane")
 # mymain("ant")
 # mymain("beethoven")
