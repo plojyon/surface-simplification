@@ -6,6 +6,31 @@ function triangleEdgesNotSorted(triangle::Triangle)
     return [(triangle[1], triangle[2]), (triangle[2], triangle[3]), (triangle[3], triangle[1])]
 end
 
+function rayIntersectsTriangle(ray_origin::Vector{Float32}, ray_direction::Vector{Float32}, v0::Vector{Float32}, v1::Vector{Float32}, v2::Vector{Float32})
+    # written by my good friend from india pretending to be an LLM
+    EPSILON = 0.000001
+    edge1 = v1 - v0
+    edge2 = v2 - v0
+    h = cross(ray_direction, edge2)
+    a = dot(edge1, h)
+    if a > -EPSILON && a < EPSILON
+        return false
+    end
+    f = 1.0 / a
+    s = ray_origin - v0
+    u = f * dot(s, h)
+    if u < 0.0 || u > 1.0
+        return false
+    end
+    q = cross(s, edge1)
+    v = f * dot(ray_direction, q)
+    if v < 0.0 || u + v > 1.0
+        return false
+    end
+    t = f * dot(edge2, q)
+    return t > EPSILON
+end
+
 function orientedTriangles(sc::SimplicialComplex2D)
     centroid = mean(sc.coords, dims=1)[1]
     all_trig = triangles(sc) # check sorted
@@ -35,7 +60,19 @@ function orientedTriangles(sc::SimplicialComplex2D)
 
             normal_vector = cross((sc.coords[curr_trig[2], :]-sc.coords[curr_trig[1], :])[1], (sc.coords[curr_trig[3], :]-sc.coords[curr_trig[1], :])[1])
             trig_centroid = mean([sc.coords[curr_trig[1], :], sc.coords[curr_trig[2], :], sc.coords[curr_trig[3], :]], dims=1)[1][1]
-            if dot(normal_vector, trig_centroid - centroid) < 0
+
+            # cast a ray from normal vector, count intersections with triangles
+            intersections = 0
+            for other_trig in all_trig
+                if other_trig != curr_trig
+                    if rayIntersectsTriangle(trig_centroid, normal_vector, sc.coords[other_trig[1]], sc.coords[other_trig[2]], sc.coords[other_trig[3]])
+                        intersections += 1
+                    end
+                end
+            end
+
+            # flip orientation if normal is pointing inwards
+            if intersections % 2 == 1
                 oriented_triangles[curr_trig] = (curr_trig[1], curr_trig[3], curr_trig[2])
             end
         else
