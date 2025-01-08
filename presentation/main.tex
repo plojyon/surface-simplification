@@ -18,8 +18,8 @@
 
 \title{Surface simplification}
 \subtitle{Project presentation}
-\author{Jakob Drusany\quad Yon Ploj}
-\institute[UL FRI]{Fakulteta za računalništvo in informatiko\\Univerza v Ljubljani}
+\author{Jakob Drusany, Yon Ploj}
+\institute[TDA]{Topological data analysis}
 \date{\selectlanguage{slovene}\today}
 
 \graphicspath{ {slike/} }
@@ -65,6 +65,21 @@
     \end{itemize}
 \end{frame}
 \begin{frame}[t]
+    \frametitle{Chosing the point $c$}
+    \begin{itemize}
+    
+        \item Where do we place $c$?
+        \begin{figure}[h]
+            \begin{center}
+                \includegraphics[width=0.7\textwidth]{edge_contract.png}
+            \end{center}
+        \end{figure}
+        \[E_H(x) = \sum_{h_i \in H} d^2(x, h_i)\]
+        \item The point $c$ has to minimize the error for a given edge $ab$
+        \[Error(ab) = \min_{c\in \mathbb{R}^3} E_H(c).\]
+    \end{itemize}
+\end{frame}
+\begin{frame}[t]
     \frametitle{Calculating the error}
     \begin{itemize}
         \item A point $x$ can be represented as a vector $x^T = (x'^T, 1)$  
@@ -94,20 +109,6 @@
     \end{itemize}
 \end{frame}
 \begin{frame}[t]
-    \frametitle{Chosing the point $c$}
-    \begin{itemize}
-    
-        \item Where do we place $c$?
-        \begin{figure}[h]
-            \begin{center}
-                \includegraphics[width=0.7\textwidth]{edge_contract.png}
-            \end{center}
-        \end{figure}
-        \item The point $c$ has to minimize the error for a given edge $ab$
-        \[Error(ab) = \min_{c\in \mathbb{R}^3} E_H(c).\]
-    \end{itemize}
-\end{frame}
-\begin{frame}[t]
     \frametitle{Computing the minimum}
     \begin{itemize}
         \item We can find the minimum simply by solving the equation
@@ -131,10 +132,10 @@
 \begin{frame}[t]
     \frametitle{Implementation problems 2}
     \begin{itemize}
-        \item The triangles are still not connected
+        \item The mesh is not a manifold
             \begin{figure}[h]
                 \begin{center}
-                    \includegraphics[width=0.4\textwidth]{triangles.png}
+                    \includegraphics[width=0.9\textwidth]{butthole.png}
                 \end{center}
             \end{figure}
     \end{itemize}

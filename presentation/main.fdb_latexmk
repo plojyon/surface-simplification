@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1736183376.36926 "/Users/jakob/Projects/faks/surface-simplification/presentation/main.tex" "main.pdf" "main" 1736183378.91477 0
-  "/Users/jakob/Projects/faks/surface-simplification/presentation/main.tex" 1736183375.95387 4751 418a39d72b1324c1418c8fc150e64e0b ""
+["pdflatex"] 1736246538.83971 "/Users/jakob/Projects/faks/surface-simplification/presentation/main.tex" "main.pdf" "main" 1736246542.02895 0
+  "/Users/jakob/Projects/faks/surface-simplification/presentation/main.tex" 1736246538.43452 4742 67380d2dc7e4163a2c186ef0cdda375d ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "/usr/local/texlive/2024basic/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -220,14 +220,15 @@
   "/usr/local/texlive/2024basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1721235188.65147 323232 8d6b4d68f7f826a5194e7d6f42a8eadd ""
   "/usr/local/texlive/2024basic/texmf-var/web2c/pdftex/pdflatex.fmt" 1713974640 7536485 18f46d78a5c6aa2a69d229229381575f ""
   "/usr/local/texlive/2024basic/texmf.cnf" 1710011638 628 8b896f7d9d41b43f4346b9091e52171f ""
-  "main.aux" 1736183378.64511 2221 61cc7b66419b2ea7f2e2d71f650e647e "pdflatex"
-  "main.nav" 1736183378.64904 1011 83c4ff004b77303d878240d0bcc95e05 "pdflatex"
-  "main.out" 1736183377.54805 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "main.tex" 1736183375.95387 4751 418a39d72b1324c1418c8fc150e64e0b ""
-  "slike/edge_contract.png" 1736180148.11845 323517 298b7dadc44a84b8517532c940bd7e3b ""
-  "slike/motor_after.png" 1736179027.43278 175520 aa2d46d414613193f278766955532d0b ""
-  "slike/motor_before.png" 1736178979.47557 204801 4f619ea5a87573b90c6602088b3f307c ""
-  "slike/triangles.png" 1736183035.88378 144515 450ac957b9a413e7ee8b5b0496f08f2e ""
+  "main.aux" 1736246541.77557 2221 61cc7b66419b2ea7f2e2d71f650e647e "pdflatex"
+  "main.nav" 1736246541.77967 1011 83c4ff004b77303d878240d0bcc95e05 "pdflatex"
+  "main.out" 1736246540.12462 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "main.tex" 1736246538.43452 4742 67380d2dc7e4163a2c186ef0cdda375d ""
+  "slike/butthole.png" 1736183844.44743 1099786 286595b7d5ab855ba8a055266b5661e5 ""
+  "slike/edge_contract.png" 1736183476.52848 323517 298b7dadc44a84b8517532c940bd7e3b ""
+  "slike/motor_after.png" 1736183476.53245 175520 aa2d46d414613193f278766955532d0b ""
+  "slike/motor_before.png" 1736183476.53855 204801 4f619ea5a87573b90c6602088b3f307c ""
+  "slike/triangles.png" 1736183476.54243 144515 450ac957b9a413e7ee8b5b0496f08f2e ""
   (generated)
   "main.aux"
   "main.log"

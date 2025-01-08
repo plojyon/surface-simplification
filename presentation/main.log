@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.24)  6 JAN 2025 18:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.4.24)  7 JAN 2025 11:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1050,13 +1050,7 @@ Package: transparent-nometadata 2022-10-27 v1.5 Transparency via pdfTeX's color 
 \ULC@box=\box79
 Package: ulem 2019/11/18
 \ULdepth=\dimen297
-) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerthemeMadrid.sty (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamercolorthemewhale.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamercolorthemeorchid.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerinnerthemerounded.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerouterthemeinfolines.sty))
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                \hskip 10.95003pt
-(hyperref)                replaced by space on input line 21.
-
-(/usr/local/texlive/2024basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerthemeMadrid.sty (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamercolorthemewhale.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamercolorthemeorchid.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerinnerthemerounded.sty) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/beamer/beamerouterthemeinfolines.sty)) (/usr/local/texlive/2024basic/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-02-20 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count342
 \l__pdf_internal_box=\box80
@@ -1230,16 +1224,16 @@ Package pdftex.def Info: slike/edge_contract.png  used on input line 66.
 (pdftex.def)             Requested size: 273.83728pt x 110.99411pt.
  [3
 
- <./slike/edge_contract.png>] [4
+ <./slike/edge_contract.png>]
+File: slike/edge_contract.png Graphic file (type png)
+<use slike/edge_contract.png>
+Package pdftex.def Info: slike/edge_contract.png  used on input line 81.
+(pdftex.def)             Requested size: 239.60567pt x 97.1207pt.
+ [4
 
 ] [5
 
-]
-File: slike/edge_contract.png Graphic file (type png)
-<use slike/edge_contract.png>
-Package pdftex.def Info: slike/edge_contract.png  used on input line 109.
-(pdftex.def)             Requested size: 239.60567pt x 97.1207pt.
- [6
+] [6
 
 ] [7
 
@@ -1247,18 +1241,19 @@ Package pdftex.def Info: slike/edge_contract.png  used on input line 109.
 <slike/triangles.png, id=241, 629.35126pt x 551.05875pt>
 File: slike/triangles.png Graphic file (type png)
 <use slike/triangles.png>
-Package pdftex.def Info: slike/triangles.png  used on input line 130.
+Package pdftex.def Info: slike/triangles.png  used on input line 131.
 (pdftex.def)             Requested size: 136.91603pt x 119.87953pt.
  [8
 
  <./slike/triangles.png>]
-File: slike/triangles.png Graphic file (type png)
-<use slike/triangles.png>
-Package pdftex.def Info: slike/triangles.png  used on input line 141.
-(pdftex.def)             Requested size: 136.91603pt x 119.87953pt.
+<slike/butthole.png, id=270, 1927.2pt x 789.95125pt>
+File: slike/butthole.png Graphic file (type png)
+<use slike/butthole.png>
+Package pdftex.def Info: slike/butthole.png  used on input line 142.
+(pdftex.def)             Requested size: 308.06367pt x 126.27423pt.
  [9
 
-]
+ <./slike/butthole.png>]
 \tf@nav=\write6
 \openout6 = `main.nav'.
 
@@ -1277,18 +1272,18 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 23611 strings out of 475567
- 461752 string characters out of 5777889
+ 23620 strings out of 475567
+ 461962 string characters out of 5777889
  1939187 words of memory out of 5000000
- 45232 multiletter control sequences out of 15000+600000
+ 45241 multiletter control sequences out of 15000+600000
  568765 words of font info for 76 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  101i,15n,107p,442b,568s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi12.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2024basic/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on main.pdf (9 pages, 686384 bytes).
+Output written on main.pdf (9 pages, 1624022 bytes).
 PDF statistics:
- 348 PDF objects out of 1000 (max. 8388607)
+ 350 PDF objects out of 1000 (max. 8388607)
  281 compressed objects within 3 object streams
  19 named destinations out of 1000 (max. 500000)
- 105 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 110 words of extra memory for PDF output out of 10000 (max. 10000000)
 
