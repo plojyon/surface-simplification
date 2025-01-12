@@ -51,6 +51,10 @@ end
 
 function fillholes!(scx::SimplicialComplex2D)
     holes = getholes(scx)
+    if length(holes) == 0
+        println("Scx already constipated")
+        return
+    end
     println("Constipating $(length(holes)) buttholes")
     for hole in ProgressBar(holes)
         vertices = Vector{Int}()

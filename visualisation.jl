@@ -8,7 +8,7 @@ end
 
 function rayIntersectsTriangle(ray_origin::Vector{Float32}, ray_direction::Vector{Float32}, v0::Vector{Float32}, v1::Vector{Float32}, v2::Vector{Float32})
     # written by my good friend from india pretending to be an LLM
-    EPSILON = 0.000001
+    EPSILON = 1e-12
     edge1 = v1 - v0
     edge2 = v2 - v0
     h = cross(ray_direction, edge2)
@@ -32,7 +32,6 @@ function rayIntersectsTriangle(ray_origin::Vector{Float32}, ray_direction::Vecto
 end
 
 function orientedTriangles(sc::SimplicialComplex2D)
-    centroid = mean(sc.coords, dims=1)[1]
     all_trig = triangles(sc) # check sorted
     not_oriented_queue = [first(all_trig)]
     oriented_triangles = Dict()
@@ -137,7 +136,7 @@ function visualize(self::ContractedSimplicialComplex2D, highlights::Array{Geomet
 end
 
 function visualize(self::SimplicialComplex2D)
-    visualize(self, "")
+    visualize(self, GeometryBasics.Point{3,Float32}[], "")
 end
 function visualize(self::SimplicialComplex2D, highlights::Array{GeometryBasics.Point{3,Float32}}, save_file::String)
     fig = Figure(size=(800, 600))
@@ -147,7 +146,7 @@ function visualize(self::SimplicialComplex2D, highlights::Array{GeometryBasics.P
 
     mesh!(ax1, orig_mesh, color=:lime)
 
-    # wireframe!(ax1, orig_mesh, color=:black, linewidth=0.5)
+    wireframe!(ax1, orig_mesh, color=:black, linewidth=0.5)
 
     # hightlight points
     if length(highlights) > 0

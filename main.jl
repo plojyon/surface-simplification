@@ -12,14 +12,6 @@ println("GeometryBasics")
 using GeometryBasics
 println("ProgressBars")
 using ProgressBars
-println("Serialization")
-using Serialization
-println("JSON3")
-using JSON3
-println("Serialization")
-using Serialization
-println("JLD2")
-using JLD2
 println("Makie")
 using Makie
 println("GLMakie")
@@ -133,7 +125,7 @@ function mymain(scpath)
     println("contracted $scpath. lp")
 end
 
-mymain("torus")
+mymain("bunny")
 # mymain("airplane")
 # mymain("ant")
 # mymain("beethoven")
